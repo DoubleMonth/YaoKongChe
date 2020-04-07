@@ -102,14 +102,10 @@ rt_uint8_t PS2_RedLight(void)
 	rt_pin_write(CS_PIN,PIN_HIGH);
 	if(Data[1]==0x73)
 	{
-		rt_kprintf("Data[0]=%d\n",Data[0]);
-		rt_kprintf("Data[1]=%d\n",Data[1]);
 		return 0;  //Ä£ÄâºìµÆ
 	}
 	else
 	{
-		rt_kprintf("Data[0]=%d\n",Data[0]);
-		rt_kprintf("Data[1]=%d\n",Data[1]);
 		return 1;  //Ä£ÄâÂÌµÆ
 	}
 		

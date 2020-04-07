@@ -1,7 +1,7 @@
 
 
-#ifndef __PROTOCOL_H__
-#define __PROTOCOL_H__
+#ifndef __PS2_PROTOCOL_H__
+#define __PS2_PROTOCOL_H__
 
 #include <rthw.h>
 #include <rtthread.h>
