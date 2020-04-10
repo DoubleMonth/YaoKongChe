@@ -36,10 +36,10 @@
 //#define WHAMMY_BAR		8
 
 //These are stick values
-#define PSS_RX 5                //右摇杆X轴数据
-#define PSS_RY 6
-#define PSS_LX 7
-#define PSS_LY 8
+#define PSS_RX 6                //右摇杆X轴数据
+#define PSS_RY 5
+#define PSS_LX 8
+#define PSS_LY 7
 
 extern rt_uint8_t Data[9];
 extern rt_uint16_t MASK[16];

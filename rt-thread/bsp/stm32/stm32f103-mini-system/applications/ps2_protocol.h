@@ -33,7 +33,7 @@ extern int CarSpeedControl;
 
 
 void Protocol(void);
-
+int ps2_sample(void);
 
 
 #endif

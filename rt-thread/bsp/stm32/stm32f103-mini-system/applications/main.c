@@ -12,6 +12,7 @@
 #include <rtdevice.h>
 #include <board.h>
 #include "bsp_ps2.h"
+#include "ps2_protocol.h"
 #include "control.h"
 /* defined the LED0 pin: PC13 */
 
@@ -28,6 +29,9 @@ int main(void)
 	                     //开启震动模式
 	Pin_Init();
 	rt_pin_write(LED0_PIN,PIN_HIGH);
+	ps2_sample();
+	pwm_test();
+	control_sample();
     /* set LED0 pin mode to output */
 //    rt_pin_mode(LED0_PIN, PIN_MODE_OUTPUT);
 //	pwm_test(0,RT_NULL);
