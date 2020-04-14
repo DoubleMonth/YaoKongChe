@@ -22,16 +22,16 @@
 
 int main(void)
 {
-    int count = 1;
-	rt_uint8_t key;
 	PS2_Init();			 //驱动端口初始化
 	PS2_SetInit();		 //配配置初始化,配置“红绿灯模式”，并选择是否可以修改
 	                     //开启震动模式
 	Pin_Init();
 	rt_pin_write(LED0_PIN,PIN_HIGH);
-	ps2_sample();
 	pwm_test();
+	rt_thread_mdelay(500);
+	ps2_sample();
 	control_sample();
+	
     /* set LED0 pin mode to output */
 //    rt_pin_mode(LED0_PIN, PIN_MODE_OUTPUT);
 //	pwm_test(0,RT_NULL);
