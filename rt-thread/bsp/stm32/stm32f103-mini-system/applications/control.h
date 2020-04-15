@@ -44,6 +44,6 @@ int control_sample(void);
 void tingZhi(void);
 void zhuanXiangTing(void);
 int pwm_test(void);
-void youZhuan(rt_uint8_t flag);
-void zuoZhuan(rt_uint8_t flag);
+void youZhuan(void);
+void zuoZhuan(void);
 #endif
