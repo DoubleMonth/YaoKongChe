@@ -225,7 +225,7 @@ void zuoZhuan(void)
 	delay_time++;
 	if(zuoZhuan_flag==1)
 	{
-		if(delay_time<=50)
+		if(delay_time<=30)
 		{
 			rt_pin_write(ZHUANXIANG_MOTOT_PIN_1,PIN_HIGH);
 			rt_pin_write(ZHUANXIANG_MOTOT_PIN_2,PIN_LOW);
@@ -247,7 +247,7 @@ void youZhuan(void)
 	delay_time2++;
 	if(youZhuan_flag==1)
 	{
-		if(delay_time2<=50)
+		if(delay_time2<=30)
 		{
 			rt_pin_write(ZHUANXIANG_MOTOT_PIN_1,PIN_LOW);
 			rt_pin_write(ZHUANXIANG_MOTOT_PIN_2,PIN_HIGH);
@@ -344,12 +344,13 @@ void motorControl(void)
 		if(PS2_AnologData(PSS_LX)>129)
 		{
 			rt_kprintf(" Left_Anolog=%5d %5d \n",PS2_AnologData(PSS_LX),PS2_AnologData(PSS_LY));
-			Rigth_Qianjin((PS2_AnologData(PSS_LX)-128)*39000);
+			Rigth_HouTui((128-PS2_AnologData(PSS_LX))*39000);
 		}
 		else if(PS2_AnologData(PSS_LX)<126)
 		{
 			rt_kprintf(" Left_Anolog=%5d %5d \n",PS2_AnologData(PSS_LX),PS2_AnologData(PSS_LY));
-			Rigth_HouTui((128-PS2_AnologData(PSS_LX))*39000);
+			
+			Rigth_Qianjin((PS2_AnologData(PSS_LX)-128)*39000);
 		}
 		//左转和右转控制	
 		if(PS2_AnologData(PSS_RY)>180)
