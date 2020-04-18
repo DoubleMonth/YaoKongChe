@@ -190,12 +190,14 @@ void Rigth_Qianjin(rt_uint32_t sudu)
 	rt_pin_write(RIGHT_MOTOT_PIN_1,PIN_HIGH);
 	rt_pin_write(RIGHT_MOTOT_PIN_2,PIN_LOW);
 	rt_pwm_set(pwm_dev, PWM_DEV_CHANNEL, 5000000, sudu);
+	rt_kprintf("sudu=%d",sudu);
 }
 void Rigth_HouTui(rt_uint32_t sudu)
 {
 	rt_pin_write(RIGHT_MOTOT_PIN_1,PIN_LOW);
 	rt_pin_write(RIGHT_MOTOT_PIN_2,PIN_HIGH);
 	rt_pwm_set(pwm_dev, PWM_DEV_CHANNEL, 5000000, sudu);
+	rt_kprintf("sudu=%d",sudu);
 }
 
 void Left_Qianjin(rt_uint32_t sudu)
@@ -203,12 +205,14 @@ void Left_Qianjin(rt_uint32_t sudu)
 	rt_pin_write(LEFT_MOTOT_PIN_1,PIN_HIGH);
 	rt_pin_write(LEFT_MOTOT_PIN_2,PIN_LOW);
 	rt_pwm_set(pwm_dev_2, PWM_DEV_CHANNEL, 5000000, sudu);
+	rt_kprintf("sudu=%d",sudu);
 }
 void Left_HouTui(rt_uint32_t sudu)
 {
 	rt_pin_write(LEFT_MOTOT_PIN_1,PIN_LOW);
 	rt_pin_write(LEFT_MOTOT_PIN_2,PIN_HIGH);
 	rt_pwm_set(pwm_dev_2, PWM_DEV_CHANNEL, 5000000, sudu);
+	rt_kprintf("sudu=%d",sudu);
 }
 void tingZhi(void)
 {
@@ -221,46 +225,13 @@ void tingZhi(void)
 }
 void zuoZhuan(void)
 {
-	static uint8_t delay_time=0;
-	delay_time++;
-	if(zuoZhuan_flag==1)
-	{
-		if(delay_time<=30)
-		{
-			rt_pin_write(ZHUANXIANG_MOTOT_PIN_1,PIN_HIGH);
-			rt_pin_write(ZHUANXIANG_MOTOT_PIN_2,PIN_LOW);
-		}
-		else
-		{
-			zhuanXiangTing();
-		}
-	}
-	else
-	{
- 		delay_time=0;
-	}
-	
+	rt_pin_write(ZHUANXIANG_MOTOT_PIN_1,PIN_HIGH);
+	rt_pin_write(ZHUANXIANG_MOTOT_PIN_2,PIN_LOW);
 }
 void youZhuan(void)
 {
-	static uint8_t delay_time2=0;
-	delay_time2++;
-	if(youZhuan_flag==1)
-	{
-		if(delay_time2<=30)
-		{
-			rt_pin_write(ZHUANXIANG_MOTOT_PIN_1,PIN_LOW);
-			rt_pin_write(ZHUANXIANG_MOTOT_PIN_2,PIN_HIGH);
-		}
-		else
-		{
-			zhuanXiangTing();
-		}
-	}
-	else
-	{
-		delay_time2=0;
-	}
+	rt_pin_write(ZHUANXIANG_MOTOT_PIN_1,PIN_LOW);
+	rt_pin_write(ZHUANXIANG_MOTOT_PIN_2,PIN_HIGH);
 }
 void zhuanXiangTing(void)
 {
@@ -284,15 +255,14 @@ static void led_flash(void)
 	{
 		led_counter=0;
 	}
+	
 }
 
 void motorControl(void)
 {
-	youZhuan();
-	zuoZhuan();
 	key=PS2_DataKey();   //
 	if ((0==PS2_RedLight())&&((key==PSB_PAD_UP)||(key==PSB_PAD_RIGHT)||(key==PSB_PAD_DOWN)||(key==PSB_PAD_LEFT)||(key==PSB_CIRCLE)||(key==PSB_SQUARE)||(key==PSB_TRIANGLE)||(key==PSB_CROSS) 
-		||(PS2_AnologData(PSS_LX)>128)||(PS2_AnologData(PSS_LX)<127)||(PS2_AnologData(PSS_RY)>180)||(PS2_AnologData(PSS_RY)<80)    //红灯模式  遥控器有效按键按下时，执行遥控器指令
+		||(PS2_AnologData(PSS_LX)>128)||(PS2_AnologData(PSS_LX)<127)||(PS2_AnologData(PSS_RY)>128)||(PS2_AnologData(PSS_RY)<127)    //红灯模式  遥控器有效按键按下时，执行遥控器指令
 		))
 	{
 		switch(key)
@@ -301,11 +271,10 @@ void motorControl(void)
 			{
 				Rigth_Qianjin(5000000);  //低速前进
 				rt_kprintf("PSB_PAD_UP \n");
-				
 			} break;  
 			case PSB_PAD_RIGHT:	
 			{
-				youZhuan_flag=1;
+				zuoZhuan();  //左转
 				rt_kprintf("PSB_PAD_RIGHT \n");
 			}  break;
 			case PSB_PAD_DOWN:	
@@ -315,53 +284,53 @@ void motorControl(void)
 			}  break; 
 			case PSB_PAD_LEFT:	
 			{
-				zuoZhuan_flag=1;
+				youZhuan();   //右转
 				rt_kprintf("PSB_PAD_LEFT \n"); 
 			} break; 
 			
 			case PSB_TRIANGLE:	rt_kprintf("PSB_TRIANGLE \n");  break; 
 			case PSB_CIRCLE:  	
 			{
-				youZhuan_flag=1;   //右转
 				youZhuan();
 				rt_kprintf("PSB_CIRCLE \n");
 			}  break; 
 			case PSB_CROSS:   	rt_kprintf("PSB_CROSS \n");  break; 
 			case PSB_SQUARE:  	
 			{
-				zuoZhuan_flag=1;    //左转
+				zuoZhuan();  //左转
 				rt_kprintf("PSB_SQUARE \n"); 
 			} break;
 			default: 
 			{
 				tingZhi();  //停止
-				youZhuan_flag=0;
 			}
 			break;
 		}			
 		//前进和后退控制	
 		if(PS2_AnologData(PSS_LX)>128)
 		{
-			rt_kprintf(" Left_Anolog=%5d %5d \n",PS2_AnologData(PSS_LX),PS2_AnologData(PSS_LY));
+			rt_kprintf(" Left_Anolog=%5d %5d  ",PS2_AnologData(PSS_LX),PS2_AnologData(PSS_LY));
 			Rigth_HouTui((PS2_AnologData(PSS_LX)-128)*39000);
 		}
 		else if(PS2_AnologData(PSS_LX)<127)
 		{
-			rt_kprintf(" Left_Anolog=%5d %5d \n",PS2_AnologData(PSS_LX),PS2_AnologData(PSS_LY));
+			rt_kprintf(" Left_Anolog=%5d %5d  ",PS2_AnologData(PSS_LX),PS2_AnologData(PSS_LY));
 			
 			Rigth_Qianjin((127-PS2_AnologData(PSS_LX))*39000);
 		}
 		//左转和右转控制	
 		if(PS2_AnologData(PSS_RY)>180)
 		{
-			rt_kprintf(" Right_Anolog=%5d %5d \n",PS2_AnologData(PSS_RX),PS2_AnologData(PSS_RY));
-			youZhuan_flag=1;
+			rt_kprintf(" Right_Anolog=%5d %5d  ",PS2_AnologData(PSS_RX),PS2_AnologData(PSS_RY));
+			youZhuan();
+			
 		}
 		else if(PS2_AnologData(PSS_RY)<80)
 		{
-			rt_kprintf(" Right_Anolog=%5d %5d \n",PS2_AnologData(PSS_RX),PS2_AnologData(PSS_RY));
-			zuoZhuan_flag=1;
+			rt_kprintf(" Right_Anolog=%5d %5d  ",PS2_AnologData(PSS_RX),PS2_AnologData(PSS_RY));
+			zuoZhuan();  //左转
 		}	
+		rt_kprintf(" zuoZhuan_flag=%d,  youZhuan_flag=%d \n",zuoZhuan_flag,youZhuan_flag);
 	}
 	else if((1==PS2_RedLight())&&((key==PSB_PAD_UP)||(key==PSB_PAD_RIGHT)||(key==PSB_PAD_DOWN)||(key==PSB_PAD_LEFT)||(key==PSB_CIRCLE)||(key==PSB_SQUARE)||(key==PSB_TRIANGLE)||(key==PSB_CROSS) ))   //绿灯模式。遥控器有效按键按下时，执行遥控器指令
 	{
@@ -371,11 +340,10 @@ void motorControl(void)
 			{
 				Rigth_Qianjin(3000000);  //低速前进
 				rt_kprintf("PSB_PAD_UP \n");
-				
 			} break;  
 			case PSB_PAD_RIGHT:	
 			{
-				youZhuan_flag=1;
+				youZhuan();
 				rt_kprintf("PSB_PAD_RIGHT \n");
 			}  break;
 			case PSB_PAD_DOWN:	
@@ -385,20 +353,20 @@ void motorControl(void)
 			}  break; 
 			case PSB_PAD_LEFT:	
 			{
-				zuoZhuan_flag=1;
+				zuoZhuan();  //左转
 				rt_kprintf("PSB_PAD_LEFT \n"); 
 			} break; 
 			
 			case PSB_TRIANGLE:	rt_kprintf("PSB_TRIANGLE \n");  break; 
 			case PSB_CIRCLE:  	
 			{
-				youZhuan_flag=1;
+				youZhuan();
 				rt_kprintf("PSB_CIRCLE \n");
 			}  break; 
 			case PSB_CROSS:   	rt_kprintf("PSB_CROSS \n");  break; 
 			case PSB_SQUARE:  	
 			{
-				zuoZhuan_flag=1;
+				zuoZhuan();  //左转
 				rt_kprintf("PSB_SQUARE \n"); 
 			} break;
 			default: 
@@ -410,8 +378,6 @@ void motorControl(void)
 	}
 	else							//没有收到遥控器有效指令时执行手动功能。
 	{
-		youZhuan_flag=0;
-		zuoZhuan_flag=0;
 		zhuanXiangTing();
 		pinRead();
 		if(((inputState.jin_state==1)&&(inputState.tui_state==1))||(inputState.jiaota_state==1))
