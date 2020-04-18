@@ -237,7 +237,7 @@ void zuoZhuan(void)
 	}
 	else
 	{
-		delay_time=0;
+ 		delay_time=0;
 	}
 	
 }
@@ -292,14 +292,14 @@ void motorControl(void)
 	zuoZhuan();
 	key=PS2_DataKey();   //
 	if ((0==PS2_RedLight())&&((key==PSB_PAD_UP)||(key==PSB_PAD_RIGHT)||(key==PSB_PAD_DOWN)||(key==PSB_PAD_LEFT)||(key==PSB_CIRCLE)||(key==PSB_SQUARE)||(key==PSB_TRIANGLE)||(key==PSB_CROSS) 
-		||(PS2_AnologData(PSS_LX)>129)||(PS2_AnologData(PSS_LX)<126)||(PS2_AnologData(PSS_RY)>180)||(PS2_AnologData(PSS_RY)<80)    //红灯模式  遥控器有效按键按下时，执行遥控器指令
+		||(PS2_AnologData(PSS_LX)>128)||(PS2_AnologData(PSS_LX)<127)||(PS2_AnologData(PSS_RY)>180)||(PS2_AnologData(PSS_RY)<80)    //红灯模式  遥控器有效按键按下时，执行遥控器指令
 		))
 	{
 		switch(key)
 		{
 			case PSB_PAD_UP: 	
 			{
-				Rigth_Qianjin(3000000);  //低速前进
+				Rigth_Qianjin(5000000);  //低速前进
 				rt_kprintf("PSB_PAD_UP \n");
 				
 			} break;  
@@ -310,7 +310,7 @@ void motorControl(void)
 			}  break;
 			case PSB_PAD_DOWN:	
 			{
-				Rigth_HouTui(3000000);  //低速后退	
+				Rigth_HouTui(5000000);  //低速后退	
 				rt_kprintf("PSB_PAD_DOWN \n");
 			}  break; 
 			case PSB_PAD_LEFT:	
@@ -334,23 +334,22 @@ void motorControl(void)
 			} break;
 			default: 
 			{
-
 				tingZhi();  //停止
 				youZhuan_flag=0;
 			}
 			break;
 		}			
 		//前进和后退控制	
-		if(PS2_AnologData(PSS_LX)>129)
+		if(PS2_AnologData(PSS_LX)>128)
 		{
 			rt_kprintf(" Left_Anolog=%5d %5d \n",PS2_AnologData(PSS_LX),PS2_AnologData(PSS_LY));
-			Rigth_HouTui((128-PS2_AnologData(PSS_LX))*39000);
+			Rigth_HouTui((PS2_AnologData(PSS_LX)-128)*39000);
 		}
-		else if(PS2_AnologData(PSS_LX)<126)
+		else if(PS2_AnologData(PSS_LX)<127)
 		{
 			rt_kprintf(" Left_Anolog=%5d %5d \n",PS2_AnologData(PSS_LX),PS2_AnologData(PSS_LY));
 			
-			Rigth_Qianjin((PS2_AnologData(PSS_LX)-128)*39000);
+			Rigth_Qianjin((127-PS2_AnologData(PSS_LX))*39000);
 		}
 		//左转和右转控制	
 		if(PS2_AnologData(PSS_RY)>180)
@@ -404,9 +403,7 @@ void motorControl(void)
 			} break;
 			default: 
 			{
-
 				tingZhi();  //停止
-
 			}
 			break;
 		}				
