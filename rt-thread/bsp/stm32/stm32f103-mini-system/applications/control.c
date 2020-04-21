@@ -261,6 +261,12 @@ static void led_flash(void)
 void motorControl(void)
 {
 	key=PS2_DataKey();   //
+	if ((key==PSB_L1)||(key==PSB_L2)||(key==PSB_L3)||(key==PSB_R1)||(key==PSB_R2)||(key==PSB_R3))  //当遥控器按下L1 L2 L3时，具有停车功能，此时手动功能也不能前进后退
+	{
+		tingZhi();  //停止
+		zhuanXiangTing(); //转向停
+		return;
+	}
 	if ((0==PS2_RedLight())&&((key==PSB_PAD_UP)||(key==PSB_PAD_RIGHT)||(key==PSB_PAD_DOWN)||(key==PSB_PAD_LEFT)||(key==PSB_CIRCLE)||(key==PSB_SQUARE)||(key==PSB_TRIANGLE)||(key==PSB_CROSS) 
 		||(PS2_AnologData(PSS_LX)>128)||(PS2_AnologData(PSS_LX)<127)||(PS2_AnologData(PSS_RY)>128)||(PS2_AnologData(PSS_RY)<127)    //红灯模式  遥控器有效按键按下时，执行遥控器指令
 		))
@@ -401,7 +407,7 @@ void motorControl(void)
 			{
 				if(inputState.sudu_state==1)
 				{
-					Rigth_HouTui(2000000);  //低速后退
+					Rigth_HouTui(3000000);  //低速后退
 				}
 				else if(inputState.sudu_state==0)		
 				{
