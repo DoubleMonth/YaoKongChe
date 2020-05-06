@@ -152,37 +152,53 @@ void pinRead(void)
 	inputState_1.switch_state=rt_pin_read(SWIITCH_PIN);
 	inputState_1.tui_state=rt_pin_read(TUI_PIN);
 	inputState_1.yaokong_state=rt_pin_read(YAOKONG_PIN);
-	rt_thread_mdelay(20);
+	rt_thread_mdelay(30);
 	inputState_2.jiaota_state=rt_pin_read(JIAOTA_PIN);
 	inputState_2.jin_state=rt_pin_read(JIN_PIN);
 	inputState_2.sudu_state=rt_pin_read(SUDU_PIN);
 	inputState_2.switch_state=rt_pin_read(SWIITCH_PIN);
 	inputState_2.tui_state=rt_pin_read(TUI_PIN);
 	inputState_2.yaokong_state=rt_pin_read(YAOKONG_PIN);
-	if(inputState_1.jiaota_state==inputState_2.jiaota_state)
+	if(inputState_1.jiaota_state==0&&inputState_2.jiaota_state==0)
 	{
-		inputState.jiaota_state=inputState_2.jiaota_state;
+		inputState.jiaota_state=0;
 	}
-	if(inputState_1.jin_state==inputState_2.jin_state)
+	else
 	{
-		inputState.jin_state=inputState_2.jin_state;
+		inputState.jiaota_state=1;
 	}
-	if(inputState_1.sudu_state==inputState_2.sudu_state)
+	if(inputState_1.jin_state==0&&inputState_2.jin_state==0)
 	{
-		inputState.sudu_state=inputState_2.sudu_state;
+		inputState.jin_state=0;
 	}
-	if(inputState_1.switch_state==inputState_2.switch_state)
+	else
 	{
-		inputState.switch_state=inputState_2.switch_state;
+		inputState.jin_state=1;
 	}
-	if(inputState_1.tui_state==inputState_2.tui_state)
+	if(inputState_1.sudu_state==0&&inputState_2.sudu_state==0)
 	{
-		inputState.tui_state=inputState_2.tui_state;
+		inputState.sudu_state=0;
 	}
-	if(inputState_1.yaokong_state==inputState_2.yaokong_state)
+	else
 	{
-		inputState.yaokong_state=inputState_2.yaokong_state;
+		inputState.sudu_state=1;
 	}
+//	if(inputState_1.switch_state==inputState_2.switch_state)
+//	{
+//		inputState.switch_state=inputState_2.switch_state;
+//	}
+	if(inputState_1.tui_state==0&&inputState_2.tui_state==0)
+	{
+		inputState.tui_state=0;
+	}
+	else
+	{
+		inputState.tui_state=1;
+	}
+//	if(inputState_1.yaokong_state==inputState_2.yaokong_state)
+//	{
+//		inputState.yaokong_state=inputState_2.yaokong_state;
+//	}
 	
 }
 void Rigth_Qianjin(rt_uint32_t sudu)
@@ -190,14 +206,12 @@ void Rigth_Qianjin(rt_uint32_t sudu)
 	rt_pin_write(RIGHT_MOTOT_PIN_1,PIN_HIGH);
 	rt_pin_write(RIGHT_MOTOT_PIN_2,PIN_LOW);
 	rt_pwm_set(pwm_dev, PWM_DEV_CHANNEL, 5000000, sudu);
-	rt_kprintf("sudu=%d",sudu);
 }
 void Rigth_HouTui(rt_uint32_t sudu)
 {
 	rt_pin_write(RIGHT_MOTOT_PIN_1,PIN_LOW);
 	rt_pin_write(RIGHT_MOTOT_PIN_2,PIN_HIGH);
 	rt_pwm_set(pwm_dev, PWM_DEV_CHANNEL, 5000000, sudu);
-	rt_kprintf("sudu=%d",sudu);
 }
 
 void Left_Qianjin(rt_uint32_t sudu)
@@ -205,14 +219,12 @@ void Left_Qianjin(rt_uint32_t sudu)
 	rt_pin_write(LEFT_MOTOT_PIN_1,PIN_HIGH);
 	rt_pin_write(LEFT_MOTOT_PIN_2,PIN_LOW);
 	rt_pwm_set(pwm_dev_2, PWM_DEV_CHANNEL, 5000000, sudu);
-	rt_kprintf("sudu=%d",sudu);
 }
 void Left_HouTui(rt_uint32_t sudu)
 {
 	rt_pin_write(LEFT_MOTOT_PIN_1,PIN_LOW);
 	rt_pin_write(LEFT_MOTOT_PIN_2,PIN_HIGH);
 	rt_pwm_set(pwm_dev_2, PWM_DEV_CHANNEL, 5000000, sudu);
-	rt_kprintf("sudu=%d",sudu);
 }
 void tingZhi(void)
 {
@@ -257,134 +269,53 @@ static void led_flash(void)
 	}
 	
 }
-
 void motorControl(void)
 {
 	key=PS2_DataKey();   //
+	
 	if ((key==PSB_L1)||(key==PSB_L2)||(key==PSB_L3)||(key==PSB_R1)||(key==PSB_R2)||(key==PSB_R3))  //当遥控器按下L1 L2 L3时，具有停车功能，此时手动功能也不能前进后退
 	{
 		tingZhi();  //停止
 		zhuanXiangTing(); //转向停
 		return;
 	}
-	if ((0==PS2_RedLight())&&((key==PSB_PAD_UP)||(key==PSB_PAD_RIGHT)||(key==PSB_PAD_DOWN)||(key==PSB_PAD_LEFT)||(key==PSB_CIRCLE)||(key==PSB_SQUARE)||(key==PSB_TRIANGLE)||(key==PSB_CROSS) 
-		||(PS2_AnologData(PSS_LX)>128)||(PS2_AnologData(PSS_LX)<127)||(PS2_AnologData(PSS_RY)>128)||(PS2_AnologData(PSS_RY)<127)    //红灯模式  遥控器有效按键按下时，执行遥控器指令
-		))
-	{
-		switch(key)
-		{
-			case PSB_PAD_UP: 	
-			{
-				Rigth_Qianjin(5000000);  //低速前进
-				rt_kprintf("PSB_PAD_UP \n");
-			} break;  
-			case PSB_PAD_RIGHT:	
-			{
-				zuoZhuan();  //左转
-				rt_kprintf("PSB_PAD_RIGHT \n");
-			}  break;
-			case PSB_PAD_DOWN:	
-			{
-				Rigth_HouTui(5000000);  //低速后退	
-				rt_kprintf("PSB_PAD_DOWN \n");
-			}  break; 
-			case PSB_PAD_LEFT:	
-			{
-				youZhuan();   //右转
-				rt_kprintf("PSB_PAD_LEFT \n"); 
-			} break; 
-			
-			case PSB_TRIANGLE:	rt_kprintf("PSB_TRIANGLE \n");  break; 
-			case PSB_CIRCLE:  	
-			{
-				youZhuan();
-				rt_kprintf("PSB_CIRCLE \n");
-			}  break; 
-			case PSB_CROSS:   	rt_kprintf("PSB_CROSS \n");  break; 
-			case PSB_SQUARE:  	
-			{
-				zuoZhuan();  //左转
-				rt_kprintf("PSB_SQUARE \n"); 
-			} break;
-			default: 
-			{
-				tingZhi();  //停止
-			}
-			break;
-		}			
+	if ((0==PS2_RedLight())&&((PS2_AnologData(PSS_LX)>128)||(PS2_AnologData(PSS_LX)<127)||(PS2_AnologData(PSS_RY)>180)||(PS2_AnologData(PSS_RY)<80)))    //红灯模式  遥控器有效按键按下时，执行遥控器指令
+	{		
 		//前进和后退控制	
 		if(PS2_AnologData(PSS_LX)>128)
 		{
-			rt_kprintf(" Left_Anolog=%5d %5d  ",PS2_AnologData(PSS_LX),PS2_AnologData(PSS_LY));
+			rt_kprintf("Left_Anolog X=%5d  Y=%5d",PS2_AnologData(PSS_LX),PS2_AnologData(PSS_LY));
 			Rigth_HouTui((PS2_AnologData(PSS_LX)-128)*39000);
 		}
 		else if(PS2_AnologData(PSS_LX)<127)
 		{
-			rt_kprintf(" Left_Anolog=%5d %5d  ",PS2_AnologData(PSS_LX),PS2_AnologData(PSS_LY));
+			rt_kprintf("Left_Anolog X=%5d  Y=%5d",PS2_AnologData(PSS_LX),PS2_AnologData(PSS_LY));
 			
 			Rigth_Qianjin((127-PS2_AnologData(PSS_LX))*39000);
+		}
+		else
+		{
+			tingZhi();  //停止
 		}
 		//左转和右转控制	
 		if(PS2_AnologData(PSS_RY)>180)
 		{
-			rt_kprintf(" Right_Anolog=%5d %5d  ",PS2_AnologData(PSS_RX),PS2_AnologData(PSS_RY));
+			rt_kprintf(" Right_Anolog X=%5d  Y=%5d  ",PS2_AnologData(PSS_RX),PS2_AnologData(PSS_RY));
 			youZhuan();
 			
 		}
 		else if(PS2_AnologData(PSS_RY)<80)
 		{
-			rt_kprintf(" Right_Anolog=%5d %5d  ",PS2_AnologData(PSS_RX),PS2_AnologData(PSS_RY));
+			rt_kprintf(" Right_Anolog X=%5d  Y=%5d  ",PS2_AnologData(PSS_RX),PS2_AnologData(PSS_RY));
 			zuoZhuan();  //左转
 		}	
-		rt_kprintf(" zuoZhuan_flag=%d,  youZhuan_flag=%d \n",zuoZhuan_flag,youZhuan_flag);
-	}
-	else if((1==PS2_RedLight())&&((key==PSB_PAD_UP)||(key==PSB_PAD_RIGHT)||(key==PSB_PAD_DOWN)||(key==PSB_PAD_LEFT)||(key==PSB_CIRCLE)||(key==PSB_SQUARE)||(key==PSB_TRIANGLE)||(key==PSB_CROSS) ))   //绿灯模式。遥控器有效按键按下时，执行遥控器指令
-	{
-		switch(key)
+		else
 		{
-			case PSB_PAD_UP: 	
-			{
-				Rigth_Qianjin(3000000);  //低速前进
-				rt_kprintf("PSB_PAD_UP \n");
-			} break;  
-			case PSB_PAD_RIGHT:	
-			{
-				youZhuan();
-				rt_kprintf("PSB_PAD_RIGHT \n");
-			}  break;
-			case PSB_PAD_DOWN:	
-			{
-				Rigth_HouTui(3000000);  //低速后退	
-				rt_kprintf("PSB_PAD_DOWN \n");
-			}  break; 
-			case PSB_PAD_LEFT:	
-			{
-				zuoZhuan();  //左转
-				rt_kprintf("PSB_PAD_LEFT \n"); 
-			} break; 
-			
-			case PSB_TRIANGLE:	rt_kprintf("PSB_TRIANGLE \n");  break; 
-			case PSB_CIRCLE:  	
-			{
-				youZhuan();
-				rt_kprintf("PSB_CIRCLE \n");
-			}  break; 
-			case PSB_CROSS:   	rt_kprintf("PSB_CROSS \n");  break; 
-			case PSB_SQUARE:  	
-			{
-				zuoZhuan();  //左转
-				rt_kprintf("PSB_SQUARE \n"); 
-			} break;
-			default: 
-			{
-				tingZhi();  //停止
-			}
-			break;
-		}				
+			zhuanXiangTing();
+		}
 	}
 	else							//没有收到遥控器有效指令时执行手动功能。
 	{
-		zhuanXiangTing();
 		pinRead();
 		if(((inputState.jin_state==1)&&(inputState.tui_state==1))||(inputState.jiaota_state==1))
 		{
@@ -402,6 +333,11 @@ void motorControl(void)
 				{
 					Rigth_Qianjin(5000000);  //高速前进
 				}
+				else
+				{
+					tingZhi();  //停止
+					zhuanXiangTing(); //转向停
+				}
 			}
 			else if((inputState.tui_state==1)&&(inputState.jin_state==0))  //后退模式
 			{
@@ -413,6 +349,16 @@ void motorControl(void)
 				{
 					Rigth_HouTui(4000000);  //高速后退
 				}
+				else
+				{
+					tingZhi();  //停止
+					zhuanXiangTing(); //转向停
+				}
+			}
+			else
+			{
+				tingZhi();  //停止
+				zhuanXiangTing(); //转向停
 			}
 		}
 		else //脚踏关
@@ -422,6 +368,19 @@ void motorControl(void)
 		}
 	}
 }
+
+//void motorControl(void)
+//{
+//	key=PS2_DataKey();
+//	if(key!=0)
+//	{
+////		rt_kprintf("\n %d is light \n",Data[1]);
+//		rt_kprintf("\n %d is pressed \n",key);
+//	}
+//	rt_kprintf(" %5d %5d %5d %5d\r\n",PS2_AnologData(PSS_LX),PS2_AnologData(PSS_LY),
+//									  PS2_AnologData(PSS_RX),PS2_AnologData(PSS_RY) );
+//	
+//}
 static rt_thread_t control_tid = RT_NULL;      /* 线程句柄 */
 static void conntrolHandle(void *parameter)
 {

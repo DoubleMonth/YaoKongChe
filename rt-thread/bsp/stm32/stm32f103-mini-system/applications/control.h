@@ -32,7 +32,7 @@
 
 struct inputState_Type
 {
-	rt_uint8_t sudu_state;     //高低速开关（自锁）：1 低速、2 高速
+	rt_uint8_t sudu_state;     //高低速开关（自锁）：1 低速、0 高速
 	rt_uint8_t jin_state;	//前进，后退组合开关（自锁）： jin_state=1,tui_state=0;前进；jin_state=0,tui_state=1;后退；jin_state=1,tui_state=1;停止。
 	rt_uint8_t tui_state;	//前进，后退组合开关（自锁）： jin_state=1,tui_state=0;前进；jin_state=0,tui_state=1;后退；jin_state=1,tui_state=1;停止。
 	rt_uint8_t yaokong_state;	//遥控、手动开关（自锁）：1 手动，2 遥控  暂时不用
